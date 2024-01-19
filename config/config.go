@@ -8,6 +8,7 @@ import (
 
 var configStruct = map[string]interface{}{
 	"postgres-config": &PostgreSQLConfig,
+	"supabase-config": &SupabaseConfig,
 }
 
 func LoadConfig() {

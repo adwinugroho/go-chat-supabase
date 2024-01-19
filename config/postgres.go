@@ -10,11 +10,11 @@ import (
 
 type (
 	EnvPostgres struct {
-		PG_HOST     string `mapstructure:"pghost"`
-		PG_USERNAME string `mapstructure:"pgusername"`
-		PG_PASSWORD string `mapstructure:"pgpassword"`
-		PG_PORT     string `mapstructure:"pgport"`
-		PG_DBNAME   string `mapstructure:"pgdbname"`
+		PG_HOST     string `mapstructure:"pg_host"`
+		PG_USERNAME string `mapstructure:"pg_username"`
+		PG_PASSWORD string `mapstructure:"pg_password"`
+		PG_PORT     string `mapstructure:"pg_port"`
+		PG_DBNAME   string `mapstructure:"pg_dbname"`
 	}
 )
 

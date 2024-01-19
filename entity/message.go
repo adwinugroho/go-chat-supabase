@@ -2,7 +2,9 @@ package entity
 
 type (
 	Message struct {
-		ID      string
-		Content map[string]interface{}
+		ID          string `json:"id"` // uuid
+		Content     string `json:"content"`
+		SKU         string `json:"sku,omitempty"` // uuid
+		Description string `json:"description,omitempty"`
 	}
 )

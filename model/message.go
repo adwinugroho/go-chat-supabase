@@ -1,3 +1,8 @@
 package model
 
-type ()
+type (
+	NewSendMessageRequest struct {
+		Content string `json:"content"`
+		SKU     string `json:"sku"`
+	}
+)
