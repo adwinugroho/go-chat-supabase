@@ -4,16 +4,23 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 type (
-	PostgresConfig struct {
+	EnvPostgres struct {
 		PG_HOST     string `mapstructure:"pghost"`
 		PG_USERNAME string `mapstructure:"pgusername"`
 		PG_PASSWORD string `mapstructure:"pgpassword"`
 		PG_PORT     string `mapstructure:"pgport"`
 		PG_DBNAME   string `mapstructure:"pgdbname"`
 	}
+)
+
+var (
+	PostgreSQLConfig EnvPostgres
+	// SQL Encryption or else
 )
 
 func InitPostgresConnection(host, port, user, password, dbName string) *sql.DB {
@@ -28,11 +35,11 @@ func InitPostgresConnection(host, port, user, password, dbName string) *sql.DB {
 	}
 
 	// check db
-	err = db.Ping()
-	if err != nil {
-		log.Printf("Error cause:%+v\n", err)
-		return nil
-	}
+	// err = db.Ping()
+	// if err != nil {
+	// 	log.Printf("Error cause:%+v\n", err)
+	// 	return nil
+	// }
 
 	fmt.Println("Connected!")
 
