@@ -21,12 +21,12 @@ func LoadConfig() {
 	}
 
 	for key, value := range configStruct {
-		log.Println("Loading config: ", key)
+		// log.Println("Loading config: ", key)
 		if err := viper.Unmarshal(value); err != nil {
 			log.Printf("Error loading config %s, cause: %+v\n", key, err)
 			log.Fatal(err)
 		}
-		log.Printf("%s: %+v\n", key, value)
-		log.Printf("Config %s loaded successfully", key)
+		// log.Printf("%s: %+v\n", key, value)
+		// log.Printf("Config %s loaded successfully", key)
 	}
 }
