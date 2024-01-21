@@ -8,7 +8,9 @@ import (
 
 func CheckAPIKey(c *fiber.Ctx) error {
 	headers := c.GetReqHeaders()
-	APIKeyFromHeader, ok := headers["api-key"]
+	// fmt.Println(headers)
+	APIKeyFromHeader, ok := headers["Api-Key"]
+	// fmt.Println(APIKeyFromHeader)
 	if ok && APIKeyFromHeader[0] == config.GeneralConfig.SecretKey {
 		return c.Next()
 	}
