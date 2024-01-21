@@ -5,26 +5,19 @@
 Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch chat in realtime.
 
 ## Architecture
-* config
-init
+* config: pengaturan API, pengaturan env, tempat dimana membuka koneksi database dll.
 
-* controller
-init
+* controller: routing API dan validasi dari depan (body dll.)
 
-* entity
-init
+* entity: tabel dan isi tabel di database
 
-* model
-init
+* model: objek request dan response
 
-* pkg
-init
+* pkg: tempat 3rd party API, library dari luar, pecahan fungsi-fungsi untuk digunakan di service/repository/controller
 
-* repository
-init
+* repository: fungsi-fungsi pada database seperti insert, update, delete dibuat disini
 
-* service
-init
+* service: fungsi-fungsi dimana logika aplikasi ditempatkan
 
 ## Tech Stack
 
@@ -48,7 +41,106 @@ Example configuration is in `example.config.yaml` file.
 
 ## API Spec
 
-Init
+`/api/chat/fetch:` Fetch all messages and save to database postgres and supabase
+`/api/chat/list-all:` Retrieve all data or search filtering by message
+
+### Request
+```json
+{
+    "filters": null
+}
+```
+### Response
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "message_id": "0652acf7-6a6f-4306-9a7f-1185beefa3cf",
+            "content": [
+                "Ayo makan",
+                "Dimana?",
+                "Terserah ikam aja",
+                "Oke di Soto Banjar Nyaman Banar ya!"
+            ],
+            "user_id": [
+                "user2",
+                "user1",
+                "user2",
+                "user1"
+            ],
+            "created_at": "2024-01-21 12:42:26"
+        },
+        {
+            "message_id": "6c2b8769-23e7-4568-b984-9313fdb02576",
+            "content": [
+                "Ayo makan",
+                "Makan dimana cuyyy?",
+                "Di Soto Banjar Nyaman Banar",
+                "Kuyy gas lahhhh"
+            ],
+            "user_id": [
+                "user2",
+                "user1",
+                "user2",
+                "user1"
+            ],
+            "created_at": "2024-01-21 13:31:19"
+        },
+        {
+            "message_id": "0652acf7-6a6f-4306-9a7f-1185beefa3cf",
+            "content": [
+                "Ayo makan",
+                "Dimana?",
+                "Terserah ikam aja",
+                "Oke di Soto Banjar Nyaman Banar ya!"
+            ],
+            "user_id": [
+                "user2",
+                "user1",
+                "user2",
+                "user1"
+            ],
+            "created_at": "2024-01-21 12:42:26"
+        }
+    ],
+    "status": true
+}
+```
+
+`/api/chat/room/new:` Create a new room for chat with another user
+### Request
+```json
+{
+    "name": "Room No. 1"
+}
+```
+### Response
+```json
+{
+    "code": 200,
+    "message": "Room successfully created with ID 293554",
+    "status": true
+}
+```
+
+`/api/chat/send:` Send broadcast messages for all user
+### Request
+```json
+{
+    "content": "Ini adalah pemberitahuan"
+}
+```
+### Response
+```json
+{
+    "code": 200,
+    "message": "Message successfully sent",
+    "status": true
+}
+```
+
+`ws/[param_roomId]?clientId=[query_clientId]:` Websocket server for chat
 
 ## Database Migration
 
