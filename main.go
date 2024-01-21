@@ -30,6 +30,9 @@ func main() {
 
 	chSupabase := config.InitSupabaseConnection(config.SupabaseConfig.SB_URL, config.SupabaseConfig.SB_API_KEY, "")
 	clientSupabase, err := config.InitSupabaseConnectionV2(config.SupabaseConfig.SB_URL, config.SupabaseConfig.SB_API_KEY, config.SupabaseConfig.SB_PASSWORD)
+	if err != nil {
+		log.Println("errir when get client supabase, cause:", clientSupabase)
+	}
 	// log.Println("successfully test supabase realtime")
 
 	// init repo
@@ -47,7 +50,7 @@ func main() {
 	initController.RouteChat(app)
 	go h.Run()
 	// start app
-	err = app.Listen(":3000")
+	err = app.Listen(config.GeneralConfig.AppPort)
 	if err != nil {
 		log.Fatal("error cause: ", err)
 	}
@@ -57,5 +60,5 @@ func AllowUpgrade(c *fiber.Ctx) error {
 	if websocket.IsWebSocketUpgrade(c) {
 		return c.Next()
 	}
-	return nil
+	return fiber.ErrUpgradeRequired
 }

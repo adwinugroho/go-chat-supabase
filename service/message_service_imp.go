@@ -42,12 +42,12 @@ func (m *MessageImp) CreateRoom(body *model.NewRoomRequest) error {
 }
 
 func (m *MessageImp) HandlerFetch() error {
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now().Local()
 	// row := map[string]interface{}{
 	// 	"created_at": now,
 	// 	"message":    "ini pesan",
 	// }
-	bytesWSessage, err := config.ReadCache("2024-01-21")
+	bytesWSessage, err := config.ReadCache(now.Format("2006-01-02"))
 	if err != nil {
 		log.Printf("error when read cache redis cause:%v\n", err)
 		return err
@@ -64,7 +64,7 @@ func (m *MessageImp) HandlerFetch() error {
 		messageToDB.Content = append(messageToDB.Content, dataInWs.Content)
 		messageToDB.UserID = append(messageToDB.UserID, dataInWs.ClientID)
 	}
-	messageToDB.CreatedAt = now
+	messageToDB.CreatedAt = now.Format("2006-01-02 15:04:05")
 	// insert to DB
 	idMessage, err := m.repoMessage.Insert(messageToDB)
 	if err != nil {
@@ -90,7 +90,7 @@ func (m *MessageImp) HandlerSend(body *model.NewSendMessageRequest) error {
 }
 
 func (m *MessageImp) ListMessage(body *model.ListAllMessageRequest) ([]entity.Message, error) {
-	list, err := m.repoMessage.ListAll(nil)
+	list, err := m.repoMessage.ListAll(body.Filters)
 	if err != nil {
 		log.Printf("error when get data from DB cause:%v\n", err)
 		return nil, err

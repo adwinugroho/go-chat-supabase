@@ -23,7 +23,7 @@ func NewMessageRepository(conn *sql.DB) repository.MessageInterface {
 
 func (c *MessageImp) Insert(model entity.Message) (string, error) {
 	model.MessageID = uuid.New().String()
-	defer c.DB.Close()
+	// defer c.DB.Close()
 	query := `INSERT INTO tb_message (message_id, content, description, created_at, user_id) VALUES ($1, $2, $3, $4, $5)`
 	_, err := c.DB.Exec(query, model.MessageID, pq.Array(model.Content), model.Description, model.CreatedAt, pq.Array(model.UserID))
 	if err != nil {
