@@ -13,6 +13,7 @@ type (
 		SB_URL      string `mapstructure:"supabase_url"`
 		SB_API_KEY  string `mapstructure:"supabase_api_key"`
 		SB_PASSWORD string `mapstructure:"supabase_password"`
+		SB_WS_URL   string `mapstructure:"sb_ws_url"`
 	}
 )
 
@@ -20,8 +21,21 @@ var (
 	SupabaseConfig EnvSupabase
 )
 
+type BroadcastMessageSupabase struct {
+	Event   string                           `json:"event"`
+	Topic   string                           `json:"topic"`
+	Payload *PayloadBroadcastMessageSupabase `json:"payload"`
+	Ref     interface{}                      `json:"ref"`
+}
+
+type PayloadBroadcastMessageSupabase struct {
+	Event   string      `json:"event"`
+	Payload interface{} `json:"payload"`
+	Type    string      `json:"ty"`
+}
+
 // RLS Token optional
-func InitSupabaseConnection(endpoint, apiKey, rlsToken string) *realtimego.Channel {
+func InitSupabaseRealtimeChannel(endpoint, apiKey, rlsToken string) *realtimego.Channel {
 	supabaseClient, err := realtimego.NewClient(endpoint, apiKey)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)

@@ -1,6 +1,9 @@
 package ws
 
 import (
+	"errors"
+	"fmt"
+	"go-chat-supabase/config"
 	"log"
 
 	"github.com/gofiber/contrib/websocket"
@@ -13,18 +16,20 @@ type Room struct {
 }
 
 type Hub struct {
-	Rooms          map[string]*Room
-	Join           chan *Client
-	Leave          chan *Client
-	ForwardMessage chan *Message
+	Rooms            map[string]*Room
+	Join             chan *Client
+	Leave            chan *Client
+	ForwardMessage   chan *Message
+	BroadcastMessage chan *config.BroadcastMessageSupabase
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		Rooms:          make(map[string]*Room),
-		Join:           make(chan *Client),
-		Leave:          make(chan *Client),
-		ForwardMessage: make(chan *Message),
+		Rooms:            make(map[string]*Room),
+		Join:             make(chan *Client),
+		Leave:            make(chan *Client),
+		ForwardMessage:   make(chan *Message),
+		BroadcastMessage: make(chan *config.BroadcastMessageSupabase),
 	}
 }
 
@@ -32,9 +37,9 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.Join:
-			log.Printf("client in ch join:%+v\n", &client)
+			// log.Printf("client in ch join:%+v\n", &client)
 			_, ok := h.Rooms[client.RoomID]
-			log.Printf("ok in join:%v\n", ok)
+			// log.Printf("ok in join:%v\n", ok)
 			if ok {
 				r := h.Rooms[client.RoomID]
 
@@ -63,7 +68,7 @@ func (h *Hub) Run() {
 
 		case objMessage := <-h.ForwardMessage:
 			_, ok := h.Rooms[objMessage.RoomID]
-			log.Printf("ok in forward message:%v\n", ok)
+			// log.Printf("ok in forward message:%v\n", ok)
 			if ok {
 				for _, cl := range h.Rooms[objMessage.RoomID].Clients {
 					cl.Message <- objMessage
@@ -79,6 +84,10 @@ func HandleServer(h *Hub) func(*websocket.Conn) {
 		clientID := conn.Query("clientId")
 		// log.Println("clientId:", clientID)
 		roomID := conn.Params("roomId")
+		if _, ok := h.Rooms[roomID]; !ok {
+			log.Printf("error cause: %v\n", errors.New("roomId not found"))
+			return
+		}
 		// log.Println("roomId:", roomID)
 		client := &Client{
 			Conn:    conn,
@@ -87,10 +96,14 @@ func HandleServer(h *Hub) func(*websocket.Conn) {
 			RoomID:  roomID,
 		}
 		h.Join <- client
+		if len(h.Rooms[roomID].Clients) >= 2 {
+			log.Printf("error cause: %v\n", errors.New("room is already full"))
+			return
+		}
 		// log.Printf("cek client who joined:%+v\n", &h.Join)
 
 		m := &Message{
-			Content: "A new user has joined the room",
+			Content: fmt.Sprintf("User %s has joined the room", clientID),
 			RoomID:  roomID,
 		}
 		h.ForwardMessage <- m

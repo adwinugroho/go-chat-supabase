@@ -28,7 +28,7 @@ func main() {
 	)
 	log.Println("successfully connect", connPostgres.Ping())
 
-	chSupabase := config.InitSupabaseConnection(config.SupabaseConfig.SB_URL, config.SupabaseConfig.SB_API_KEY, "")
+	chSupabase := config.InitSupabaseRealtimeChannel(config.SupabaseConfig.SB_URL, config.SupabaseConfig.SB_API_KEY, "")
 	clientSupabase, err := config.InitSupabaseConnectionV2(config.SupabaseConfig.SB_URL, config.SupabaseConfig.SB_API_KEY, config.SupabaseConfig.SB_PASSWORD)
 	if err != nil {
 		log.Println("errir when get client supabase, cause:", clientSupabase)

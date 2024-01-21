@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
+	wsGorila "github.com/gorilla/websocket"
 	supa "github.com/nedpals/supabase-go"
 
 	realtimego "github.com/overseedio/realtime-go"
@@ -86,6 +87,35 @@ func (m *MessageImp) HandlerFetch() error {
 }
 
 func (m *MessageImp) HandlerSend(body *model.NewSendMessageRequest) error {
+	conn, resp, err := wsGorila.DefaultDialer.Dial(config.SupabaseConfig.SB_WS_URL, nil)
+	if err != nil {
+		log.Printf("error cause:%+v\n", err)
+		return err
+	}
+	defer conn.Close()
+	log.Printf("check response handler send:%+v\n", resp)
+
+	broadcastMessage := config.BroadcastMessageSupabase{
+		Event: "broadcast",
+		Topic: "realtime:public:tb_broadcast",
+		Payload: &config.PayloadBroadcastMessageSupabase{
+			Event:   "broadcast",
+			Payload: body.Content,
+			Type:    "broadcast",
+		},
+		Ref: "",
+	}
+	err = conn.WriteJSON(broadcastMessage)
+	if err != nil {
+		log.Printf("error cause:%+v\n", err)
+		return err
+	}
+
+	if err != nil {
+		log.Printf("error cause:%+v\n", err)
+		return err
+	}
+
 	return nil
 }
 
