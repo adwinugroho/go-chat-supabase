@@ -14,27 +14,6 @@ type (
 		SB_API_KEY  string `mapstructure:"supabase_api_key"`
 		SB_PASSWORD string `mapstructure:"supabase_password"`
 	}
-
-	PostgresChanges struct {
-		Event  string `json:"event"`
-		Schema string `json:"schema"`
-		Table  string `json:"table"`
-	}
-
-	Config struct {
-		PostgresChanges []PostgresChanges `json:"postgres_changes"`
-	}
-
-	Payload struct {
-		Config Config `json:"config"`
-	}
-
-	Message struct {
-		Topic   string      `json:"topic"`
-		Event   string      `json:"event"`
-		Payload interface{} `json:"payload"`
-		Ref     string      `json:"ref"`
-	}
 )
 
 var (

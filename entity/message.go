@@ -2,9 +2,10 @@ package entity
 
 type (
 	Message struct {
-		ID          string
-		Content     string `json:"content"`
-		Description string `json:"description,omitempty"`
-		CreatedAt   string `json:"createdAt"` // yyyy-mm-dd hh:mm:ss
+		MessageID   string   `json:"message_id"`
+		Content     []string `json:"content"`
+		UserID      []string `json:"user_id"`
+		Description string   `json:"description,omitempty"`
+		CreatedAt   string   `json:"created_at"` // yyyy-mm-dd hh:mm:ss
 	}
 )

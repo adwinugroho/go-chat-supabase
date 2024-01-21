@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type MessageImp struct {
@@ -21,18 +22,17 @@ func NewMessageRepository(conn *sql.DB) repository.MessageInterface {
 }
 
 func (c *MessageImp) Insert(model entity.Message) (string, error) {
+	model.MessageID = uuid.New().String()
 	defer c.DB.Close()
-	query := `INSERT INTO tb_message (content, description, createdAt) VALUES ($1, $2, $3) RETURNING id`
-
-	model.ID = uuid.New().String()
-	err := c.DB.QueryRow(query, model.Content, model.Description, model.CreatedAt).Scan(&model.ID)
+	query := `INSERT INTO tb_message (message_id, content, description, created_at, user_id) VALUES ($1, $2, $3, $4, $5)`
+	_, err := c.DB.Exec(query, model.MessageID, pq.Array(model.Content), model.Description, model.CreatedAt, pq.Array(model.UserID))
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
 		return "", err
 	}
 
-	fmt.Printf("Insert new message to DB with ID:%s\n", model.ID)
-	return model.ID, nil
+	fmt.Printf("Insert new message to DB with ID:%s\n", model.MessageID)
+	return model.MessageID, nil
 }
 
 func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, error) {
@@ -49,7 +49,7 @@ func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, 
 	for rows.Next() {
 		var result entity.Message
 
-		err = rows.Scan(&result.ID, &result.Content, &result.Description, &result.CreatedAt)
+		err = rows.Scan(&result.MessageID, pq.Array(&result.Content), &result.Description, &result.CreatedAt, pq.Array(&result.UserID))
 		if err != nil {
 			log.Printf("Error cause:%+v\n", err)
 			return nil, err

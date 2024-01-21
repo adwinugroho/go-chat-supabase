@@ -18,6 +18,7 @@ func main() {
 
 	// test load config with viper YAML
 	config.LoadConfig()
+	config.InitRedisClient()
 	connPostgres := config.InitPostgresConnection(
 		config.PostgreSQLConfig.PG_HOST,
 		config.PostgreSQLConfig.PG_PORT,

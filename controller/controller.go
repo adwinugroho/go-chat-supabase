@@ -22,7 +22,7 @@ func NewChatController(messageService *service.MessageInterface) ChatController 
 func (controller *ChatController) RouteChat(app *fiber.App) {
 	routeChat := app.Group("/api/chat")
 	routeChat.Post("/fetch", controller.FetchMessage)
-	routeChat.Post("/list-all", controller.SendMessage)
+	routeChat.Post("/list-all", controller.ListMessage)
 	routeChat.Post("/send", controller.SendMessage)
 	routeChat.Post("/room/new", controller.NewRoom)
 
@@ -46,6 +46,44 @@ func (controller *ChatController) FetchMessage(c *fiber.Ctx) error {
 			"code":    200,
 			"status":  true,
 			"message": "Ok!",
+		})
+}
+
+func (controller *ChatController) ListMessage(c *fiber.Ctx) error {
+	var body model.ListAllMessageRequest
+	err := c.BodyParser(&body)
+	if err != nil {
+		log.Println("error cause:", err)
+		return c.Status(fiber.StatusBadRequest).
+			JSON(map[string]interface{}{
+				"code":         400,
+				"status":       false,
+				"errorMessage": "Invalid Data",
+			})
+	}
+
+	result, err := controller.MessageService.ListMessage(&body)
+	if err != nil {
+		log.Println("error cause:", err)
+		return c.Status(fiber.StatusInternalServerError).
+			JSON(map[string]interface{}{
+				"code":         500,
+				"status":       false,
+				"errorMessage": "Internal Server Error",
+			})
+	} else if result == nil {
+		return c.Status(fiber.StatusNotFound).
+			JSON(map[string]interface{}{
+				"code":         404,
+				"status":       false,
+				"errorMessage": "Data Not Found",
+			})
+	}
+	return c.Status(fiber.StatusOK).
+		JSON(map[string]interface{}{
+			"code":   200,
+			"status": true,
+			"data":   result,
 		})
 }
 

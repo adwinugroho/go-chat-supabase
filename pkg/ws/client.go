@@ -1,7 +1,8 @@
 package ws
 
 import (
-	"go-chat-supabase/entity"
+	"encoding/json"
+	"go-chat-supabase/config"
 	"log"
 	"time"
 
@@ -16,8 +17,9 @@ type Client struct {
 }
 
 type Message struct {
-	Content string `json:"content"`
-	RoomID  string `json:"roomId"`
+	Content  string `json:"content"`
+	RoomID   string `json:"roomId"`
+	ClientID string `json:"clientId,omitempty"`
 }
 
 func (c *Client) WriteMessage() {
@@ -25,16 +27,9 @@ func (c *Client) WriteMessage() {
 		c.Conn.Close()
 	}()
 
-	var messageToDB []entity.Message
-	var now = time.Now().Local().Format("2006-01-02 15:04:05.0000")
 	for {
 		for message := range c.Message {
 			c.Conn.WriteJSON(message)
-			var eachMessage = entity.Message{
-				Content:   message.Content,
-				CreatedAt: now,
-			}
-			messageToDB = append(messageToDB, eachMessage)
 		}
 	}
 }
@@ -45,20 +40,49 @@ func (c *Client) ReadMessage(hub *Hub) {
 		c.Conn.Close()
 	}()
 
+	var now = time.Now().Local().Format("2006-01-02")
+
 	for {
 		_, messageWS, err := c.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v\n", err)
+				log.Printf("error cause: %v\n", err)
 			}
 			break
 		}
 
 		initMessage := &Message{
-			Content: string(messageWS),
-			RoomID:  c.RoomID,
+			Content:  string(messageWS),
+			RoomID:   c.RoomID,
+			ClientID: c.ID,
+		}
+		var arrMessage []Message
+		msgRedis, err := config.ReadCache(now)
+		if err != nil {
+			log.Println("error when get message from redis", err)
 		}
 
+		if msgRedis == nil {
+			arrMessage = append(arrMessage, *initMessage)
+			err = config.WriteCache(now, arrMessage)
+			if err != nil {
+				log.Println("error when set message to redis", err)
+			}
+		} else {
+			// var getMsgRedis []Message
+			json.Unmarshal(msgRedis, &arrMessage)
+			arrMessage = append(arrMessage, *initMessage)
+			err = config.DeleteCache(now)
+			if err != nil {
+				log.Println("error when delete message redis", err)
+			}
+			err = config.WriteCache(now, arrMessage)
+			if err != nil {
+				log.Println("error when set message to redis", err)
+			}
+		}
+
+		log.Printf("results in read ws:%v\n", arrMessage)
 		hub.ForwardMessage <- initMessage
 	}
 }

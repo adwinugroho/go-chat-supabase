@@ -9,6 +9,8 @@ import (
 var configStruct = map[string]interface{}{
 	"postgres-config": &PostgreSQLConfig,
 	"supabase-config": &SupabaseConfig,
+	"redis-config":    &RedisConfig,
+	"general-config":  &GeneralConfig,
 }
 
 func LoadConfig() {
