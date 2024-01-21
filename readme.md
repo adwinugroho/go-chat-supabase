@@ -42,6 +42,16 @@ Example configuration is in `example.config.yaml` file.
 ## API Spec
 
 `/api/chat/fetch:` Fetch all messages and save to database postgres and supabase
+### Response
+```json
+{
+    "code": 200,
+    "message": "Room successfully created with ID 293554",
+    "status": true
+}
+```
+
+
 `/api/chat/list-all:` Retrieve all data or search filtering by message
 
 ### Request
@@ -108,6 +118,7 @@ Example configuration is in `example.config.yaml` file.
 }
 ```
 
+
 `/api/chat/room/new:` Create a new room for chat with another user
 ### Request
 ```json
@@ -123,6 +134,7 @@ Example configuration is in `example.config.yaml` file.
     "status": true
 }
 ```
+
 
 `/api/chat/send:` Send broadcast messages for all user
 ### Request
@@ -140,7 +152,9 @@ Example configuration is in `example.config.yaml` file.
 }
 ```
 
+
 `ws/[param_roomId]?clientId=[query_clientId]:` Websocket server for chat
+
 
 ## Database Migration
 
