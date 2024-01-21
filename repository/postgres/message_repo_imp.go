@@ -37,9 +37,16 @@ func (c *MessageImp) Insert(model entity.Message) (string, error) {
 
 func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, error) {
 	var results []entity.Message
-	sqlStatement := `SELECT * FROM tb_message`
-
-	rows, err := c.DB.Query(sqlStatement)
+	query := `SELECT * FROM tb_message`
+	if filters != nil {
+		_, ok := filters["search_text"]
+		if ok {
+			searchByMessage := "%" + filters["search_text"].(string) + "%"
+			query = fmt.Sprintf(`SELECT * FROM tb_message WHERE "content" LIKE '%s'`, searchByMessage)
+		}
+	}
+	log.Println("query:", query)
+	rows, err := c.DB.Query(query)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
 		return nil, err
