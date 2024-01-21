@@ -54,13 +54,6 @@ func (h *Hub) Run() {
 			if ok {
 				_, ok := h.Rooms[client.RoomID].Clients[client.ID]
 				if ok {
-					if len(h.Rooms[client.RoomID].Clients) != 0 {
-						h.ForwardMessage <- &Message{
-							Content: "user left the chat",
-							RoomID:  client.RoomID,
-						}
-					}
-
 					delete(h.Rooms[client.RoomID].Clients, client.ID)
 					close(client.Message)
 				}
@@ -96,10 +89,10 @@ func HandleServer(h *Hub) func(*websocket.Conn) {
 			RoomID:  roomID,
 		}
 		h.Join <- client
-		if len(h.Rooms[roomID].Clients) >= 2 {
-			log.Printf("error cause: %v\n", errors.New("room is already full"))
-			return
-		}
+		// if len(h.Rooms[roomID].Clients) >= 2 {
+		// 	log.Printf("error cause: %v\n", errors.New("room is already full"))
+		// 	return
+		// }
 		// log.Printf("cek client who joined:%+v\n", &h.Join)
 
 		m := &Message{
