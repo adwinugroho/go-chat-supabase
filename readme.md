@@ -19,6 +19,8 @@ Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch
 
 * service: fungsi-fungsi dimana logika aplikasi ditempatkan
 
+* test: untuk menjalankan unit test
+
 ## Tech Stack
 
 - Golang 
@@ -38,6 +40,16 @@ Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch
 ## Configuration
 
 Example configuration is in `example.config.yaml` file.
+
+## Tasks
+
+- [x] Chat 1-on-1
+- [x] Fetch all messages and save to supabase & postgre DB
+- [x] Go Migration
+- [x] Raw Query
+- [x] Secure REST API (with header api-key)
+- [x] Search history chat
+- [ ] Send messages from supabase with websocket
 
 ## API Spec
 
@@ -194,8 +206,12 @@ migrate -path ./pkg/migration -database "postgres://postgres:p@ssw0rd@localhost:
 
 ## Run Application
 
-### Run web server
-
+- Check `example.config.yaml`
+- Input your `api-key` in request header.
+- Type this on your terminal
 ```bash
 go run main.go
 ```
+
+
+

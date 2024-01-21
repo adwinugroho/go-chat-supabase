@@ -2,13 +2,16 @@ package controller
 
 import (
 	"fmt"
+	"go-chat-supabase/config"
 	"go-chat-supabase/model"
 	"go-chat-supabase/pkg/helper"
 	"go-chat-supabase/service"
 	"log"
 
+	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type ChatController struct {
@@ -21,6 +24,7 @@ func NewChatController(messageService *service.MessageInterface) ChatController 
 
 func (controller *ChatController) RouteChat(app *fiber.App) {
 	routeChat := app.Group("/api/chat")
+	routeChat.Use(CheckAPIKey)
 	routeChat.Post("/fetch", controller.FetchMessage)
 	routeChat.Post("/list-all", controller.ListMessage)
 	routeChat.Post("/send", controller.SendMessage)
@@ -167,4 +171,18 @@ func (controller *ChatController) SendMessage(c *fiber.Ctx) error {
 			"status":  true,
 			"message": "Message successfully sent!",
 		})
+}
+
+func customKeyFunc() jwt.Keyfunc {
+	return func(t *jwt.Token) (interface{}, error) {
+		// Always check the signing method
+		if t.Method.Alg() != jwtware.HS256 {
+			return nil, fmt.Errorf("Unexpected jwt signing method=%v", t.Header["alg"])
+		}
+
+		// TODO custom implementation of loading signing key like from a database
+		signingKey := config.GeneralConfig.SecretKey
+
+		return []byte(signingKey), nil
+	}
 }
