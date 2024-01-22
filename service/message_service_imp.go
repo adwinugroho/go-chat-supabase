@@ -44,10 +44,6 @@ func (m *MessageImp) CreateRoom(body *model.NewRoomRequest) error {
 
 func (m *MessageImp) HandlerFetch() error {
 	now := time.Now().Local()
-	// row := map[string]interface{}{
-	// 	"created_at": now,
-	// 	"message":    "ini pesan",
-	// }
 	bytesWSessage, err := config.ReadCache(now.Format("2006-01-02"))
 	if err != nil {
 		log.Printf("error when read cache redis cause:%v\n", err)
@@ -59,7 +55,7 @@ func (m *MessageImp) HandlerFetch() error {
 
 	var getWSMessage []ws.Message
 	json.Unmarshal(bytesWSessage, &getWSMessage)
-	log.Printf("ws message in service:%v\n", getWSMessage)
+	// log.Printf("ws message in service:%v\n", getWSMessage)
 	var messageToDB entity.Message
 	for _, dataInWs := range getWSMessage {
 		messageToDB.Content = append(messageToDB.Content, dataInWs.Content)
@@ -82,11 +78,11 @@ func (m *MessageImp) HandlerFetch() error {
 		return err
 	}
 
-	// fmt.Println(results)
 	return nil
 }
 
 func (m *MessageImp) HandlerSend(body *model.NewSendMessageRequest) error {
+	// TODO: fix open connection to webscoket supabase
 	conn, resp, err := wsGorila.DefaultDialer.Dial(config.SupabaseConfig.SB_WS_URL, nil)
 	if err != nil {
 		log.Printf("error cause:%+v\n", err)
@@ -119,18 +115,18 @@ func (m *MessageImp) HandlerSend(body *model.NewSendMessageRequest) error {
 	return nil
 }
 
+func (m *MessageImp) HandleServerRooom() func(*websocket.Conn) {
+	return ws.HandleServer(m.hub)
+}
+
 func (m *MessageImp) ListMessage(body *model.ListAllMessageRequest) ([]entity.Message, error) {
 	list, err := m.repoMessage.ListAll(body.Filters)
 	if err != nil {
 		log.Printf("error when get data from DB cause:%v\n", err)
 		return nil, err
 	} else if list == nil {
-		log.Printf("result data DB nil %v", list)
+		log.Printf("result data DB nil %v\n", list)
 		return nil, nil
 	}
 	return list, nil
-}
-
-func (m *MessageImp) HandleServerRooom() func(*websocket.Conn) {
-	return ws.HandleServer(m.hub)
 }

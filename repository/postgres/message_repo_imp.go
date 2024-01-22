@@ -45,7 +45,7 @@ func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, 
 			query = fmt.Sprintf(`SELECT * FROM tb_message WHERE "content" LIKE '%s'`, searchByMessage)
 		}
 	}
-	log.Println("query:", query)
+	// log.Println("query:", query)
 	rows, err := c.DB.Query(query)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)

@@ -74,6 +74,6 @@ func InitSupabaseConnectionV2(url, key, password string) (*supa.Client, error) {
 	// 	log.Printf("Error cause:%+v\n", err)
 	// 	return nil, err
 	// }
-	log.Println("client supabase:", supabase)
+	// log.Println("client supabase:", supabase)
 	return supabase, nil
 }

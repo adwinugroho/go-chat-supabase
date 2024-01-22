@@ -82,7 +82,7 @@ func (c *Client) ReadMessage(hub *Hub) {
 			}
 		}
 
-		log.Printf("results in read ws:%v\n", arrMessage)
+		// log.Printf("results in read ws:%v\n", arrMessage)
 		hub.ForwardMessage <- initMessage
 	}
 }
