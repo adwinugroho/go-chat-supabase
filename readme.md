@@ -59,7 +59,7 @@ Example configuration is in `example.config.yaml` file.
 ```json
 {
     "code": 200,
-    "message": "Room successfully created with ID 293554",
+    "message": "Ok!",
     "status": true
 }
 ```
