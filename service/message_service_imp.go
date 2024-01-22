@@ -107,11 +107,6 @@ func (m *MessageImp) HandlerSend(body *model.NewSendMessageRequest) error {
 		return err
 	}
 
-	if err != nil {
-		log.Printf("error cause:%+v\n", err)
-		return err
-	}
-
 	return nil
 }
 
