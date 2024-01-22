@@ -27,7 +27,7 @@ func TestCreate(t *testing.T) {
 		UserID:      []string{"user1", "user2"},
 	}
 
-	mock.ExpectExec(`INSERT INTO table_message \(message_id, content, description, created_at, user_id\) VALUES \(\$1, \$2, \$3, \$4, \$5\)`).
+	mock.ExpectExec(`INSERT INTO table_message \(message_id, content, user_id, description, created_at\) VALUES \(\$1, \$2, \$3, \$4, \$5\)`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -54,7 +54,7 @@ func TestInsertMessage_ErrorInExec(t *testing.T) {
 		UserID:      []string{"user1", "user2"},
 	}
 
-	mock.ExpectExec(`INSERT INTO table_message \(message_id, content, description, created_at, user_id\) VALUES \(\$1, \$2, \$3, \$4, \$5\)`).
+	mock.ExpectExec(`INSERT INTO table_message \(message_id, content, user_id, description, created_at\) VALUES \(\$1, \$2, \$3, \$4, \$5\)`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnError(sql.ErrConnDone)
 
@@ -79,9 +79,9 @@ func TestListAllMessages(t *testing.T) {
 	}
 
 	mock.ExpectQuery(`SELECT \* FROM table_message WHERE "content" LIKE \'%content%\'`).
-		WillReturnRows(sqlmock.NewRows([]string{"message_id", "content", "description", "created_at", "user_id"}).
-			AddRow("1", pq.Array([]string{"content1", "content2"}), "Test description", time.Now(), pq.Array([]string{"user1", "user2"})).
-			AddRow("2", pq.Array([]string{"content3", "content4"}), "Another description", time.Now(), pq.Array([]string{"user3", "user4"})))
+		WillReturnRows(sqlmock.NewRows([]string{"message_id", "content", "user_id", "description", "created_at"}).
+			AddRow("1", pq.Array([]string{"content1", "content2"}), pq.Array([]string{"user1", "user2"}), "Test description", time.Now()).
+			AddRow("2", pq.Array([]string{"content3", "content4"}), pq.Array([]string{"user3", "user4"}), "Another description", time.Now()))
 
 	resultMessages, err := repo.ListAll(filters)
 
