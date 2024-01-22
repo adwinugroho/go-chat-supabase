@@ -36,6 +36,18 @@ Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch
 - Viper (Configuration)
 - Golang Migrate (Database Migration)
 
+- github.com/DATA-DOG/go-sqlmock v1.5.2
+- github.com/go-redis/redis v6.15.9+incompatible
+- github.com/gofiber/contrib/websocket v1.3.0
+- github.com/gofiber/fiber/v2 v2.52.0
+- github.com/google/uuid v1.5.0
+- github.com/gorilla/websocket v1.5.0
+- github.com/lib/pq v1.10.9
+- github.com/nedpals/supabase-go v0.4.0
+- github.com/overseedio/realtime-go v0.0.0
+- github.com/spf13/viper v1.18.2
+- github.com/stretchr/testify v1.8.4
+
 
 ## Configuration
 
