@@ -24,7 +24,7 @@ func NewMessageRepository(conn *sql.DB) repository.MessageInterface {
 func (c *MessageImp) Insert(model entity.Message) (string, error) {
 	model.MessageID = uuid.New().String()
 	// defer c.DB.Close()
-	query := `INSERT INTO tb_message (message_id, content, description, created_at, user_id) VALUES ($1, $2, $3, $4, $5)`
+	query := `INSERT INTO table_message (message_id, content, description, created_at, user_id) VALUES ($1, $2, $3, $4, $5)`
 	_, err := c.DB.Exec(query, model.MessageID, pq.Array(model.Content), model.Description, model.CreatedAt, pq.Array(model.UserID))
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
@@ -37,7 +37,7 @@ func (c *MessageImp) Insert(model entity.Message) (string, error) {
 
 func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, error) {
 	var results []entity.Message
-	query := `SELECT * FROM tb_message`
+	query := `SELECT * FROM table_message`
 	if filters != nil {
 		_, ok := filters["search_text"]
 		if ok {
