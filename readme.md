@@ -166,7 +166,7 @@ Example configuration is in `example.config.yaml` file.
 ```
 
 
-`ws/[param_roomId]?clientId=[query_clientId]:` Websocket server for chat
+`/api/chat/ws/[param_roomId]?clientId=[query_clientId]:` Websocket server for chat
 
 
 ## Database Migration
