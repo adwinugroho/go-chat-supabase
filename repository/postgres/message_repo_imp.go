@@ -24,8 +24,8 @@ func NewMessageRepository(conn *sql.DB) repository.MessageInterface {
 func (c *MessageImp) Insert(model entity.Message) (string, error) {
 	model.MessageID = uuid.New().String()
 	// defer c.DB.Close()
-	query := `INSERT INTO table_message (message_id, content, description, created_at, user_id) VALUES ($1, $2, $3, $4, $5)`
-	_, err := c.DB.Exec(query, model.MessageID, pq.Array(model.Content), model.Description, model.CreatedAt, pq.Array(model.UserID))
+	query := `INSERT INTO table_message (message_id, content, user_id, description, created_at) VALUES ($1, $2, $3, $4, $5)`
+	_, err := c.DB.Exec(query, model.MessageID, pq.Array(model.Content), pq.Array(model.UserID), model.Description, model.CreatedAt)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
 		return "", err
@@ -42,7 +42,7 @@ func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, 
 		_, ok := filters["search_text"]
 		if ok {
 			searchByMessage := "%" + filters["search_text"].(string) + "%"
-			query = fmt.Sprintf(`SELECT * FROM tb_message WHERE "content" LIKE '%s'`, searchByMessage)
+			query = fmt.Sprintf(`SELECT * FROM table_message WHERE "content" LIKE '%s'`, searchByMessage)
 		}
 	}
 	// log.Println("query:", query)
@@ -56,7 +56,7 @@ func (c *MessageImp) ListAll(filters map[string]interface{}) ([]entity.Message, 
 	for rows.Next() {
 		var result entity.Message
 
-		err = rows.Scan(&result.MessageID, pq.Array(&result.Content), &result.Description, &result.CreatedAt, pq.Array(&result.UserID))
+		err = rows.Scan(&result.MessageID, pq.Array(&result.Content), pq.Array(&result.UserID), &result.Description, &result.CreatedAt)
 		if err != nil {
 			log.Printf("Error cause:%+v\n", err)
 			return nil, err
