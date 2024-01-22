@@ -36,6 +36,7 @@ Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch
 - Viper (Configuration)
 - Golang Migrate (Database Migration)
 
+## Module
 
 - github.com/DATA-DOG/go-sqlmock v1.5.2
 - github.com/go-redis/redis v6.15.9+incompatible
