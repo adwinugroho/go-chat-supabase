@@ -5,21 +5,21 @@
 Simple API Chat peer-to-peer and integrate with Supabase to store chat and fetch chat in realtime.
 
 ## Architecture
-* config: pengaturan API, pengaturan env, tempat dimana membuka koneksi database dll.
+* config: Configuration settings for the API, environment settings, the location for opening database connections, etc.
 
-* controller: routing API dan validasi dari depan (body dll.)
+* controller: API routing and front-end validation (e.g., body validation).
 
-* entity: tabel dan isi tabel di database
+* entity: Defining the entity or schema for the data in the database.
 
-* model: objek request dan response
+* model: Request and response objects.
 
-* pkg: tempat 3rd party API, library dari luar, pecahan fungsi-fungsi untuk digunakan di service/repository/controller
+* pkg: Location for 3rd party APIs, external libraries, and some general functions.
 
-* repository: fungsi-fungsi pada database seperti insert, update, delete dibuat disini
+* repository: Database functions such as insert, update, delete are implemented here.
 
-* service: fungsi-fungsi dimana logika aplikasi ditempatkan
+* service: Layer where the business logic is placed.
 
-* test: untuk menjalankan unit test
+* test: Used for running unit tests.
 
 ## Tech Stack
 
@@ -50,6 +50,7 @@ Example configuration is in `example.config.yaml` file.
 - [x] Secure REST API (with header api-key)
 - [x] Search history chat
 - [ ] Send messages from supabase with websocket
+- [ ] Unit test all layers
 
 ## API Spec
 
